@@ -19,8 +19,8 @@ class MyCustomActor extends Actor {
   async rollAttribute(attributeName) {
     const attrLower = attributeName.toLowerCase();
     const attrUpper = attributeName.toUpperCase();
-    const baseLevel = this.system.attributes.main[attrLower].value;
-    const xLevel = this.system.attributes.main.x.value;
+    const baseLevel = this.system.attributes.main[attrLower]?.value || 1;
+    const xLevel = this.system.attributes.main.x?.value || 1;
 
     // Determine if this is a hybrid roll
     const isHybridRoll = this.canUseHybridRoll(baseLevel, xLevel);
@@ -41,7 +41,6 @@ class MyCustomActor extends Actor {
     if (game.dice3d) {
       await game.dice3d.showForRoll(baseRoll, game.user, true);
       if (xRoll) {
-        // Assuming Dice So Nice allows for custom dice options
         await game.dice3d.showForRoll(xRoll, game.user, true, null, false, {
           colorset: "custom_x_dice" // You'd need to define this in your Dice So Nice settings
         });
@@ -65,7 +64,8 @@ class MyCustomActor extends Actor {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: this }),
       content: content,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      rolls: [baseRoll, xRoll].filter(Boolean)
     });
 
     // Update journal entries separately for base and X rolls
