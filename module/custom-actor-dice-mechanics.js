@@ -50,13 +50,14 @@ class MyCustomActor extends Actor {
 
     const baseFlatRolls = baseRoll.dice[0].results.map(r => r.result);
     const xFlatRolls = xRoll ? xRoll.dice[0].results.map(r => r.result) : [];
+    const combinedRolls = baseFlatRolls.concat(xFlatRolls);
 
     let content = this.formatRollContent(attrUpper, baseFlatRolls, xFlatRolls);
 
-    // Check for special conditions (double 5s, double 6s) in base roll only
+    // Check for special conditions (double 5s, double 6s)
     if (baseLevel >= 4) {
-      const hasDoubleFive = baseFlatRolls.filter(r => r === 5).length >= 2;
-      const hasDoubleSix = baseFlatRolls.filter(r => r === 6).length >= 2;
+      const hasDoubleFive = combinedRolls.filter(r => r === 5).length >= 2;
+      const hasDoubleSix = combinedRolls.filter(r => r === 6).length >= 2;
       content += this.getSpecialEffectsMessage(hasDoubleFive, hasDoubleSix);
     }
 
